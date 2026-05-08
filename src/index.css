@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-abyss: #050508;
+  --color-dark-indigo: #0A0A0E;
+  --color-system-blue: #00E5FF;
+  --color-system-red: #FF2A2A;
+
+  --font-system: 'Rajdhani', sans-serif;
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+body {
+  background-color: var(--color-abyss);
+  color: #e0e0e0;
+  font-family: var(--font-body);
+}
+
+/* Optional immersive radial background overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(#00E5FF 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.03;
+  z-index: 0;
+}
+
+@layer utilities {
+  .glass-panel {
+    background: rgba(20, 25, 35, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    border-radius: 0.125rem;
+  }
+  
+  .glass-panel-active {
+    background: rgba(20, 25, 35, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 0.125rem;
+  }
+
+  .text-glow-blue {
+    text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+  }
+  
+  .text-glow-red {
+    text-shadow: 0 0 8px rgba(255, 42, 42, 0.6);
+  }
+}
