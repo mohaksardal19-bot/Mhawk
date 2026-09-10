@@ -15,7 +15,7 @@ export function QuestsScreen() {
 
   const { playerState, addDungeonRecord, addStat } = usePlayer();
 
-  const bodyParts = ["Chest", "Back", "Legs", "Shoulders", "Arms", "Core", "Cardio", "Outdoor"];
+  const bodyParts = ["Chest", "Back", "Legs", "Shoulders", "Biceps", "Triceps", "Core", "Cardio", "Outdoor"];
 
   // State for tracked sets of the currently active exercise
   const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);

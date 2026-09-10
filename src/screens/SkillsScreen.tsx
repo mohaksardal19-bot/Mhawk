@@ -76,7 +76,7 @@ export function SkillsScreen() {
                <Target size={12} />
                Highest Synergy
              </div>
-             <p className="text-xs text-white/70">Your Arms and Back are highly developed (Rank B & C). Consider focusing on Legs to maintain aesthetic and functional balance according to System recommendations.</p>
+             <p className="text-xs text-white/70">Your Biceps and Back are highly developed. Consider focusing on Legs to maintain aesthetic and functional balance according to System recommendations.</p>
            </div>
         </div>
       </div>

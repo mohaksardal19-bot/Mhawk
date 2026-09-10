@@ -35,6 +35,7 @@ interface PlayerState {
   energy: [number, number]; // current, max
   dungeonsHistory: DungeonRecord[];
   skills: Skill[];
+  profilePic: string | null;
 }
 
 interface PlayerContextType {
@@ -43,6 +44,7 @@ interface PlayerContextType {
   addDungeonRecord: (record: DungeonRecord, bodyPartTarget?: string) => void;
   addStat: (statName: keyof PlayerStats, amount: number) => void;
   levelUp: (levels: number) => void;
+  setProfilePic: (url: string) => void;
 }
 
 const defaultState: PlayerState = {
@@ -59,11 +61,13 @@ const defaultState: PlayerState = {
   health: [1000, 1000],
   energy: [200, 200],
   dungeonsHistory: [],
+  profilePic: null,
   skills: [
     { name: "Chest", level: 0, exp: 0, nextExp: 1000, rank: "E", target: "Pectoralis Major" },
     { name: "Back", level: 0, exp: 0, nextExp: 1000, rank: "E", target: "Latissimus Dorsi" },
     { name: "Shoulders", level: 0, exp: 0, nextExp: 1000, rank: "E", target: "Deltoids" },
-    { name: "Arms", level: 0, exp: 0, nextExp: 1000, rank: "E", target: "Biceps/Triceps" },
+    { name: "Biceps", level: 0, exp: 0, nextExp: 1000, rank: "E", target: "Biceps Brachii" },
+    { name: "Triceps", level: 0, exp: 0, nextExp: 1000, rank: "E", target: "Triceps Brachii" },
     { name: "Legs", level: 0, exp: 0, nextExp: 1000, rank: "E", target: "Quadriceps/Hamstrings" },
     { name: "Core", level: 0, exp: 0, nextExp: 1000, rank: "E", target: "Abdominals" },
   ]
@@ -153,6 +157,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const setProfilePic = (url: string) => {
+    setPlayerState((prev) => ({ ...prev, profilePic: url }));
+  };
+
   return (
     <PlayerContext.Provider
       value={{
@@ -161,6 +169,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         addDungeonRecord,
         addStat,
         levelUp,
+        setProfilePic,
       }}
     >
       {children}

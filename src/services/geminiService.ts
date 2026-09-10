@@ -21,22 +21,32 @@ export interface WorkoutExercise {
 }
 
 export async function generateAIWorkout(bodyPart: string, playerLevel: number): Promise<WorkoutExercise[]> {
-  const client = getGenAIClient();
-  
   const exerciseDict: Record<string, string[]> = {
     "Chest": ["Bench press normal", "Bench press inclined", "Bench press declined", "Barbell bench press", "Weighted dips", "Cable Crossovers", "Chest Dips", "Dumbbell pullover", "Dumbbell Flys", "Peck Deck", "Standing Cable Fly"],
     "Back": ["Cable Lat pull down", "High row machine", "bent-over rows barbell", "landmine row", "Upright barbell row", "one arm dumbbell row", "Cable pullover", "Lever seated reverse fly", "Pull ups", "assisted pull ups", "seated cable rows"],
     "Legs": ["Squats", "Deadlift", "Bridges", "Donkey kick", "Sumo Squats", "Lunges", "Bulgarian split squat", "Calf Raises", "Leg Extensions", "Leg Press", "Leg Curls", "Adduction Machine"],
     "Shoulders": ["Dumbbell lateral raises", "Overhead barbell press", "Bent over low pulley rear delt fly", "Standing Dumbbell raises", "Seated Dumbbell raises", "Arnold press", "Cable Face pull", "Smith machine shoulder press", "Dumbell front raises", "Standing cable reverse fly", "machine reverse fly", "single arm cable raises", "Cable lateral raises"],
-    "Arms": ["Barbell curls", "Dumbbell curls", "Incline dumbbell curls", "Dumbbell hammer curls", "Cable curls", "Concentration curls", "EZ Bar Preacher curl", "Machine curl", "lying dumbbell curl", "Standing high pulley cable curl"],
+    "Biceps": ["Barbell curls", "Dumbbell curls", "Incline dumbbell curls", "Dumbbell hammer curls", "Cable curls", "Concentration curls", "EZ Bar Preacher curl", "Machine curl", "lying dumbbell curl", "Standing high pulley cable curl"],
+    "Triceps": ["Triceps pulldown", "Cable pushdown", "overhead triceps extension", "skull crusher", "high pulley overhead triceps extension", "triceps pushdown", "triceps extension standing", "cable single arm triceps pushdown", "dip on floor with bench", "one arm side triceps pushdown", "diamond pushups", "kickbacks", "one arm extension"],
     "Core": ["Floor leg raises", "Weighted crunches", "Sit ups", "Cable crunch", "Hanging leg raises", "Plank", "Ab crunches", "Side plank", "Abdominal air bike", "Decline bench sit ups", "Mountain climber", "Shoulder taps", "Russian twist", "Roman chair leg curls"]
   };
 
   const allowedExercises = exerciseDict[bodyPart] || [];
+  
+  if (allowedExercises.length > 0) {
+    // Return the hardcoded list statically so we never miss any requested exercise
+    return allowedExercises.map(name => ({
+      name,
+      reps: "10-12",
+      weight: "10", // Default starting weight
+      xp_reward: 100
+    }));
+  }
 
+  // Fallback to AI if it's an unknown body part
+  const client = getGenAIClient();
   const prompt = `You are the System from Solo Leveling. Given the target body part (${bodyPart}) and the hunter's level (${playerLevel}), generate a daily quest workout instance (a Dungeon).
-Select exactly 10 exercises ONLY from this approved list: ${allowedExercises.join(", ")}. If there are fewer than 10 exercises available in the list, use all of them.
-Provide the workout as a JSON list of exercises. Each exercise should have a name (the exact name from the list, or slightly thematicized but recognizable), reps (string like "12", "5-8", or "Failure"), and suggested weight (in kg, or "Bodyweight" if no weight needed). Make them appropriate for the level. The XP reward should scale with difficulty.`;
+Provide the workout as a JSON list of 5-8 exercises. Each exercise should have a name, reps (string like "12", "5-8", or "Failure"), and suggested weight (in kg, or "Bodyweight" if no weight needed). Make them appropriate for the level. The XP reward should scale with difficulty.`;
 
   const response = await client.models.generateContent({
     model: "gemini-3-flash-preview",

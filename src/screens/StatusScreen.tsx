@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "motion/react";
 import { Dumbbell, Shield, Swords, Trophy, Activity, CalendarDays, LogOut } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { usePlayer } from "../context/PlayerContext";
+import { PWAInstallButton } from "../components/PWAInstallButton";
 
 interface StatusScreenProps {
   key?: string;
@@ -10,7 +11,19 @@ interface StatusScreenProps {
 
 export function StatusScreen({ onBack }: StatusScreenProps = {}) {
   const [activeTab, setActiveTab] = useState<'overview' | 'history'>('overview');
-  const { playerState } = usePlayer();
+  const { playerState, setProfilePic } = usePlayer();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePic(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const historyData = playerState.dungeonsHistory.length > 0 
     ? playerState.dungeonsHistory.map(h => ({
@@ -63,11 +76,14 @@ export function StatusScreen({ onBack }: StatusScreenProps = {}) {
             <h1 className="text-2xl font-black italic uppercase tracking-tighter text-[#e0e0e0]">
               Player Profile
             </h1>
-            {onBack && (
-              <button onClick={onBack} className="text-white/40 hover:text-white/80 transition-colors flex items-center justify-center bg-white/5 p-2 rounded-full border border-white/10 shadow-[0_0_10px_rgba(0,0,0,0.5)]">
-                <LogOut size={16} />
-              </button>
-            )}
+            <div className="flex items-center gap-3">
+              <PWAInstallButton />
+              {onBack && (
+                <button onClick={onBack} className="text-white/40 hover:text-white/80 transition-colors flex items-center justify-center bg-white/5 p-2 rounded-full border border-white/10 shadow-[0_0_10px_rgba(0,0,0,0.5)]">
+                  <LogOut size={16} />
+                </button>
+              )}
+            </div>
           </div>
         </header>
 
@@ -79,9 +95,30 @@ export function StatusScreen({ onBack }: StatusScreenProps = {}) {
           <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-system-blue"></div>
 
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 border border-system-blue flex items-center justify-center rotate-45 shrink-0 bg-dark-indigo shadow-[0_0_15px_rgba(0,229,255,0.2)]">
-              <div className="w-14 h-14 border border-system-blue flex items-center justify-center text-system-blue font-black italic -rotate-45 text-2xl">{playerState.rank}</div>
-            </div>
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              className={`w-16 h-16 border border-system-blue flex items-center justify-center shrink-0 bg-dark-indigo shadow-[0_0_15px_rgba(0,229,255,0.2)] relative overflow-hidden group cursor-pointer ${!playerState.profilePic ? 'rotate-45' : 'bg-black/50'}`}
+            >
+              {playerState.profilePic ? (
+                <>
+                  <img src={playerState.profilePic} alt="Profile" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/60 hidden group-hover:flex items-center justify-center">
+                    <span className="text-[8px] font-bold text-white uppercase tracking-widest text-center">Change</span>
+                  </div>
+                </>
+              ) : (
+                <div className="w-14 h-14 border border-system-blue flex items-center justify-center text-system-blue font-black italic -rotate-45 text-2xl group-hover:bg-system-blue/20 transition-colors">
+                  {playerState.rank}
+                </div>
+              )}
+            </button>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleImageUpload} 
+              accept="image/*" 
+              className="hidden" 
+            />
             <div className="flex-1 ml-2">
               <div className="flex flex-col">
                 <span className="text-[10px] text-system-blue font-bold uppercase tracking-widest mb-1">Hunter Name</span>
